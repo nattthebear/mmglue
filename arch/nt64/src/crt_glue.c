@@ -31,23 +31,23 @@ void _fini()
 	__global_dtors_fn();
 }
 
-struct __tls {
+/*struct __tls {
 	void *		pad[16/sizeof(void *)];
 	struct pthread	pt;
-} __builtin_tls = {{0}};
+} __builtin_tls = {{0}};*/
 
 void __init_tls (size_t * auxv)
 {
-	#define T __builtin_tls
+	//#define T __builtin_tls
+	struct pthread* ppt = __pthread_self();
+	//__set_thread_area(&T.pt);
 
-	__set_thread_area(&T.pt);
-
-	T.pt.self	= &T.pt;
-	T.pt.locale	= &libc.global_locale;
-	T.pt.tid	= __syscall(SYS_set_tid_address, &T.pt.tid);
+	ppt->self	= ppt;
+	ppt->locale	= &libc.global_locale;
+	ppt->tid	= __syscall(SYS_set_tid_address, &ppt->tid);
 
 	libc.can_do_threads = 1;
-	libc.tls_size = sizeof(struct __tls);
+	libc.tls_size = 32;//sizeof(struct __tls);
 };
 
 void __libc_entry_routine(
@@ -85,11 +85,15 @@ void __libc_entry_routine(
 	__global_ctors_fn = ctx.do_global_ctors_fn;
 	__global_dtors_fn = ctx.do_global_dtors_fn;
 
+	// TODO: we jump out right after start_main, and never make it to __libc_start_main
+	// so a lot of things need to happen that don't
+	__init_tls(NULL);
+
 	/* enter libc */
-	__psx_vtbl->start_main(__main,argc,argv,__libc_start_main);
+	// __psx_vtbl->start_main(__main,argc,argv,__libc_start_main);
 
 	/* guard */
-	a_crash();
+	// a_crash();
 }
 
 static int __pthread_surrogate_init(struct pthread * self)

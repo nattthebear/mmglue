@@ -1,4 +1,7 @@
 #include <stddef.h>
+#include "psxglue.h"
+
+extern const struct __psx_vtbl * __psx_vtbl;
 
 #define	TP_ADJ(p)	(p)
 #define	CANCEL_REG_IP	0x1F
@@ -6,7 +9,7 @@
 extern uintptr_t __teb_sys_idx;
 extern uintptr_t __teb_libc_idx;
 
-struct __os_tib {
+/*struct __os_tib {
 	void *	exception_list;
 	void *	stack_base;
 	void *	stack_limit;
@@ -20,24 +23,24 @@ static __inline__ void * __os_get_teb_address(void)
 		: "=r" (ptrRet) : :
 		);
 	return ptrRet;
-}
+}*/
 
 
 static inline void __pthread_convert(void)
 {
 	/* (third-party thread support) */
-	__asm__ __volatile__ (
+	/*__asm__ __volatile__ (
 		"push %rax\n\t"
 		"movq __psx_vtbl,%rax\n\t"
 		"sub $0x28,%rsp\n\t"
 		"call *(%rax)\n\t"
 		"add $0x28,%rsp\n\t"
 		"pop  %rax\n\t"
-		);
+		);*/
 }
 
 
-static inline struct pthread ** __psx_tlca(void)
+/*static inline struct pthread ** __psx_tlca(void)
 {
 	struct pthread **	ptlca;
 	struct __os_tib *	tib;
@@ -58,19 +61,20 @@ static inline struct pthread ** __psx_tlca(void)
 	}
 
 	return ptlca;
-}
+}*/
 
 
 static inline struct pthread * __pthread_self(void)
 {
-	struct pthread ** ptlca;
+	/*struct pthread ** ptlca;
 
 	ptlca = __psx_tlca();
 	if (ptlca) return *ptlca;
 
-	/* (third-party thread) */
+	// (third-party thread)
 	__pthread_convert();
 	ptlca = __psx_tlca();
-	return *ptlca;
+	return *ptlca;*/
+	return (struct pthread *)__psx_vtbl->pthread_self();
 }
 

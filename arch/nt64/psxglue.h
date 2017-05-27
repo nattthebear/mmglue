@@ -18,6 +18,7 @@ typedef int	__psx_start_main(void *, int, char **, int (*)(void *, int, char **)
 typedef void	__psx_convert_thread(void);
 typedef void	__psx_unmapself(void *, void *);
 typedef long	__psx_log_output(char *, signed int);
+typedef void * __psx_pthread_self(void);
 
 struct __ldso_vtbl {
 	__ldso_dladdr *		dladdr;
@@ -34,6 +35,7 @@ struct __psx_vtbl {
 	__psx_convert_thread *	convert_thread;
 	__psx_unmapself *	unmapself;
 	__psx_log_output *	log_output;
+	__psx_pthread_self *  pthread_self;
 };
 
 struct __psx_context {
@@ -50,13 +52,13 @@ struct __psx_context {
 	void *			do_global_dtors_fn;
 };
 
-struct __tlca {
+/*struct __tlca {
 	void *	pthread_self;
 	int *	pthread_set_child_tid;
 	int *	pthread_clear_child_tid;
 	char *	pthread_tls;
 	char **	pthread_dtls;
-};
+};*/
 
 typedef int __psx_init_routine(
 	int *			argc,

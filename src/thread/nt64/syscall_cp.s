@@ -5,9 +5,9 @@
 
 __syscall_cp_asm:
 __cp_begin:
-	movq	(%rcx),	%rcx		# check content of ptr
-	test	%ecx,	%ecx
-	jnz	__cancel		# thread is pending cancellation
+	#movq	(%rcx),	%rcx		# check content of ptr
+	#test	%ecx,	%ecx
+	#jnz	__cancel		# thread is pending cancellation
 
 	movq	%rdx,	    %rcx	# move water
 	movq	%r8,	    %rdx	# from one glass
